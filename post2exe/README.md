@@ -235,38 +235,6 @@ That means:
 - for corpus-wide compile runs, you should assume Verus is still needed because
   some problems still fall back to the macro backend
 
-## Current Corpus Status
-
-Latest local full compile sweep from the repo root on **2026-04-22**:
-
-```bash
-python3 post2exe/gen_post2exe.py \
-  --all \
-  --compile \
-  --out-dir /tmp/post2exe_all_compile11 \
-  --force
-```
-
-Result:
-
-- `923` generated
-- `66` skipped
-- `831` compiled
-- `92` compile failures
-
-Compile rates:
-
-- generated checkers: `831 / 923 = 90.0%`
-- full corpus: `831 / 989 = 84.0%`
-
-Backend breakdown from that run:
-
-- direct backend: `831 / 851 = 97.5%`
-- macro fallback: `0 / 71 = 0.0%`
-
-The remaining compile failures are now mostly macro-fallback problems, not
-direct-backend ones.
-
 ## Supported Runtime Shapes
 
 The generated runtime currently handles top-level and nested combinations of:
@@ -299,22 +267,6 @@ Common blockers:
 
 When a problem is skipped, the script reports the blocker instead of emitting a
 known-bad checker.
-
-## Development Notes
-
-The two files that matter are:
-
-- [gen_post2exe.py](post2exe/gen_post2exe.py):
-  direct lowering, runtime parser generation, compile/run harness
-- [gen_test_post.py](post2exe/gen_test_post.py):
-  shared spec extraction and macro-path normalization
-
-Rule of thumb:
-
-- if the problem is bad postcondition extraction or normalization, fix
-  `gen_test_post.py`
-- if the problem is direct Rust lowering or runtime decoding, fix
-  `gen_post2exe.py`
 
 ## Non-Goals
 

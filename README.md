@@ -2,7 +2,8 @@
 
 VeriContest is a competitive-programming benchmark for verifiable code
 generation in Rust with Verus. It accompanies the paper **"VeriContest: A
-Competitive-Programming Benchmark for Verifiable Code Generation."**
+Competitive-Programming Benchmark for Verifiable Code Generation"**
+([arXiv:2605.08553](https://arxiv.org/abs/2605.08553)).
 
 The benchmark contains 946 main benchmark problems: 690 from LeetCode and 256
 from Codeforces. Each problem pairs a natural-language description with
@@ -10,6 +11,10 @@ expert-validated formal specifications, judge-accepted Rust code, and
 Verus-checked proofs. The repository also includes an `extended/` set of
 problems that were constructed with specifications, code, and proofs but are not
 part of the main benchmark evaluation.
+
+The complete dataset release, including positive and mutated negative testcase files, is
+available on Hugging Face:
+[Gax-c/VeriContest](https://huggingface.co/datasets/Gax-c/VeriContest).
 
 ## Repository Layout
 
@@ -76,9 +81,8 @@ The generated testcase files, `testcases.jsonl` and
 `mutated_testcases.jsonl`, are too large to include directly in this GitHub
 repository. The GitHub repository is intended to make the problem artifacts,
 specifications, code, proofs, and tooling easy to inspect and version. The
-complete benchmark, including both the positive testcase files and the mutated
-testcase files for every main benchmark problem, is distributed through the
-Hugging Face dataset release.
+complete release is available on Hugging Face:
+[Gax-c/VeriContest](https://huggingface.co/datasets/Gax-c/VeriContest).
 
 ## Extended Problems
 
@@ -169,3 +173,14 @@ Generation**
 The paper introduces the benchmark construction pipeline, quality-assurance
 checks, evaluation tasks, and empirical results for state-of-the-art language
 models on verifiable code generation.
+
+## Citation
+
+```bibtex
+@article{xie2026vericontest,
+  title={VeriContest: A Competitive-Programming Benchmark for Verifiable Code Generation},
+  author={Xie, Zichen and Pawagi, Mrigank and Liu, Yuxin and Rai, Aaditi and Shao, Lize and Berberian Jr, John and Che, Sicong and Wang, Wenxi},
+  journal={arXiv preprint arXiv:2605.08553},
+  year={2026}
+}
+```

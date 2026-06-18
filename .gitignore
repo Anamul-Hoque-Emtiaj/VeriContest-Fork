@@ -11,3 +11,8 @@ build/
 *.so
 *.o
 *.rlib
+
+# Exception: the bundled Verus toolchain ships prebuilt runtime libraries that
+# ./verus/verus needs to run. Keep them tracked.
+!verus/*.so
+!verus/*.rlib

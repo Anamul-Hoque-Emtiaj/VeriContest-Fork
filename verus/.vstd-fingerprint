@@ -1,0 +1,10 @@
+vstd_no_std = false
+vstd_no_alloc = false
+
+[dependencies_mtime]
+seconds = 1777968748
+nanos = 759067353
+
+[vstd_mtime]
+seconds = 1777968498
+nanos = 522123712

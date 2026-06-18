@@ -23,6 +23,10 @@ benchmark/
   codeforces/       # 256 main Codeforces benchmark problems
   leetcode/         # 690 main LeetCode benchmark problems
   extended/         # 61 verified problems excluded from the main benchmark
+lemmas/             # Reusable Verus proof lemmas (arithmetic, bits, sequences)
+skills/             # Authoring guides and scripts for adding new problems
+verus/              # Bundled Verus toolchain (invoked as ./verus/verus)
+post2exe/           # Postcondition-testing component
 ```
 
 Each problem directory contains the verification artifacts for one problem:

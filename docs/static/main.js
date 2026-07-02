@@ -1,6 +1,8 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // respect single line breaks so per-line example blocks don't run together
+  if (window.marked && marked.setOptions) marked.setOptions({ breaks: true });
   initNav();
   initReveal();
   initGapChart();

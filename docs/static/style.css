@@ -262,6 +262,17 @@ body {
 }
 .detail-panel.content ul { margin: 0.2rem 0 0.9rem 1rem; }
 .detail-panel.content strong { color: var(--ink); }
+.detail-panel.content h2,
+.detail-panel.content h3 {
+  font-size: 0.95rem; font-weight: 800; color: var(--ink);
+  margin: 1.05rem 0 0.4rem;
+}
+.detail-panel.content blockquote {
+  border-left: 3px solid var(--accent); background: var(--tint);
+  padding: 0.55rem 0.85rem; margin: 0.35rem 0 0.9rem;
+  border-radius: 0 8px 8px 0; color: var(--ink); font-size: 0.85rem;
+}
+.detail-panel.content blockquote strong { color: var(--accent); }
 
 /* ---------- leaderboard ---------- */
 .lb-toolbar { margin-bottom: 0.9rem; }

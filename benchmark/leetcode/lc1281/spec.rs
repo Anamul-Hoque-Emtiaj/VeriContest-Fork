@@ -6,32 +6,24 @@ verus! {
 
 pub struct Solution;
 
-pub open spec fn digit_product_bounded(n: nat, digits: nat) -> int
-    decreases digits,
+pub open spec fn digit_product(n: nat) -> int
+    decreases n,
 {
-    if digits == 0 {
+    if n == 0 {
         1int
     } else {
-        (n % 10) as int * digit_product_bounded(n / 10, (digits - 1) as nat)
+        (n % 10) as int * digit_product((n / 10) as nat)
     }
 }
 
-pub open spec fn digit_sum_bounded(n: nat, digits: nat) -> int
-    decreases digits,
+pub open spec fn digit_sum(n: nat) -> int
+    decreases n,
 {
-    if digits == 0 {
+    if n == 0 {
         0int
     } else {
-        (n % 10) as int + digit_sum_bounded(n / 10, (digits - 1) as nat)
+        (n % 10) as int + digit_sum((n / 10) as nat)
     }
-}
-
-pub open spec fn digit_product(n: nat) -> int {
-    digit_product_bounded(n, 6)
-}
-
-pub open spec fn digit_sum(n: nat) -> int {
-    digit_sum_bounded(n, 6)
 }
 
 impl Solution {
@@ -44,4 +36,4 @@ impl Solution {
     }
 }
 
-} 
+}

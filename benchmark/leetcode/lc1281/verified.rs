@@ -6,32 +6,24 @@ verus! {
 
 pub struct Solution;
 
-pub open spec fn digit_product_bounded(n: nat, digits: nat) -> int
-    decreases digits,
+pub open spec fn digit_product(n: nat) -> int
+    decreases n,
 {
-    if digits == 0 {
+    if n == 0 {
         1int
     } else {
-        (n % 10) as int * digit_product_bounded(n / 10, (digits - 1) as nat)
+        (n % 10) as int * digit_product((n / 10) as nat)
     }
 }
 
-pub open spec fn digit_sum_bounded(n: nat, digits: nat) -> int
-    decreases digits,
+pub open spec fn digit_sum(n: nat) -> int
+    decreases n,
 {
-    if digits == 0 {
+    if n == 0 {
         0int
     } else {
-        (n % 10) as int + digit_sum_bounded(n / 10, (digits - 1) as nat)
+        (n % 10) as int + digit_sum((n / 10) as nat)
     }
-}
-
-pub open spec fn digit_product(n: nat) -> int {
-    digit_product_bounded(n, 6)
-}
-
-pub open spec fn digit_sum(n: nat) -> int {
-    digit_sum_bounded(n, 6)
 }
 
 pub open spec fn pow9(k: nat) -> int
@@ -44,34 +36,37 @@ pub open spec fn pow9(k: nat) -> int
     }
 }
 
-proof fn lemma_pow9_positive(k: nat)
+pub open spec fn pow10(k: nat) -> int
+    decreases k,
+{
+    if k == 0 {
+        1int
+    } else {
+        10 * pow10((k - 1) as nat)
+    }
+}
+
+proof fn pow9_pos(k: nat)
     ensures
         pow9(k) >= 1,
     decreases k,
 {
-    if k == 0 {
-    } else {
-        lemma_pow9_positive((k - 1) as nat);
+    if k > 0 {
+        pow9_pos((k - 1) as nat);
     }
 }
 
-proof fn lemma_product_bound_step(product: int, digit: int, bound: int)
+proof fn pow9_le(a: nat, b: nat)
     requires
-        0 <= product <= bound,
-        0 <= digit <= 9,
+        a <= b,
     ensures
-        0 <= product * digit <= 9 * bound,
+        pow9(a) <= pow9(b),
+    decreases b,
 {
-    assert(product * digit <= 9 * bound) by(nonlinear_arith)
-        requires
-            0 <= product <= bound,
-            0 <= digit <= 9,
-    {}
-    assert(product * digit >= 0) by(nonlinear_arith)
-        requires
-            product >= 0,
-            digit >= 0,
-    {}
+    if a < b {
+        pow9_le(a, (b - 1) as nat);
+        pow9_pos((b - 1) as nat);
+    }
 }
 
 impl Solution {
@@ -84,78 +79,103 @@ impl Solution {
         let mut num: i32 = n;
         let mut product: i64 = 1;
         let mut sum: i64 = 0;
-        let mut cnt: u32 = 0;
+        let ghost mut cnt: nat = 0;
 
-        while cnt < 6
+        assert(pow10(6nat) == 1000000) by (compute);
+
+        while num > 0
             invariant
                 0 <= num <= 100000,
                 cnt <= 6,
-                0 <= product <= pow9(cnt as nat),
-                product * digit_product_bounded(num as nat, (6 - cnt) as nat)
-                    == digit_product(n as nat),
-                sum + digit_sum_bounded(num as nat, (6 - cnt) as nat)
-                    == digit_sum(n as nat),
+                num < pow10((6 - cnt) as nat),
+                0 <= product,
+                product <= pow9(cnt),
                 0 <= sum <= 9 * cnt,
-                pow9(cnt as nat) <= 531441,
-            decreases 6 - cnt,
+                (product as int) * digit_product(num as nat) == digit_product(n as nat),
+                (sum as int) + digit_sum(num as nat) == digit_sum(n as nat),
+            decreases num,
         {
+            let ghost cnt0 = cnt;
+            let ghost num0 = num;
+            let ghost p0 = product;
+            let ghost s0 = sum;
             let digit = num % 10;
-            assert(0 <= digit <= 9);
+            assert(0 <= digit < 10);
 
             proof {
-                assert(digit as nat == (num as nat) % 10);
-                let d = (6 - cnt) as nat;
-                assert(d > 0);
-
-                
-                assert(digit_product_bounded(num as nat, d)
-                    == (num as nat % 10) as int
-                        * digit_product_bounded((num as nat) / 10, (d - 1) as nat));
-                assert(digit_sum_bounded(num as nat, d)
-                    == (num as nat % 10) as int
-                        + digit_sum_bounded((num as nat) / 10, (d - 1) as nat));
-
-                
-                assert(product * digit as i64
-                    * digit_product_bounded((num / 10) as nat, (d - 1) as nat)
-                    == digit_product(n as nat)) by(nonlinear_arith)
-                    requires
-                        product * digit_product_bounded(num as nat, d)
-                            == digit_product(n as nat),
-                        digit_product_bounded(num as nat, d)
-                            == digit as int
-                                * digit_product_bounded((num / 10) as nat, (d - 1) as nat),
-                {}
-
-                
-                lemma_product_bound_step(product as int, digit as int, pow9(cnt as nat));
-                assert(9 * pow9(cnt as nat) == pow9((cnt + 1) as nat));
-
-                lemma_pow9_positive((cnt + 1) as nat);
-                assert(pow9((cnt + 1) as nat) <= 531441) by {
-                    assert(pow9(0nat) == 1);
-                    assert(pow9(1nat) == 9 * pow9(0nat));
-                    assert(pow9(2nat) == 9 * pow9(1nat));
-                    assert(pow9(3nat) == 9 * pow9(2nat));
-                    assert(pow9(4nat) == 9 * pow9(3nat));
-                    assert(pow9(5nat) == 9 * pow9(4nat));
-                    assert(pow9(6nat) == 9 * pow9(5nat));
+                if cnt0 >= 6 {
+                    assert((6 - cnt0) as nat == 0nat);
+                    assert(pow10(0nat) == 1);
+                    assert(false);
                 }
+                assert(cnt0 <= 5);
+                assert(p0 <= pow9(cnt0));
+                pow9_pos(cnt0);
+                pow9_le(cnt0, 6nat);
+                assert(pow9(6nat) == 531441) by (compute);
+                assert(p0 <= 531441);
+                assert((p0 as int) * (digit as int) <= 4782969) by (nonlinear_arith)
+                    requires
+                        0 <= p0 <= 531441,
+                        0 <= digit < 10,
+                ;
+                assert((p0 as int) * (digit as int) >= 0) by (nonlinear_arith)
+                    requires
+                        0 <= p0,
+                        0 <= digit,
+                ;
+                assert(digit as nat == (num0 as nat) % 10);
+                assert((num0 / 10) as nat == (num0 as nat) / 10);
+                assert(digit_product(num0 as nat)
+                    == (digit as int) * digit_product((num0 / 10) as nat));
+                assert(digit_sum(num0 as nat)
+                    == (digit as int) + digit_sum((num0 / 10) as nat));
             }
 
             product = product * digit as i64;
             sum = sum + digit as i64;
             num = num / 10;
-            cnt = cnt + 1;
+
+            proof {
+                cnt = cnt + 1;
+                assert(product as int == (p0 as int) * (digit as int));
+                assert(sum as int == (s0 as int) + (digit as int));
+                assert(num as nat == (num0 / 10) as nat);
+                assert(pow9(cnt) == 9 * pow9(cnt0));
+                assert((p0 as int) * (digit as int) <= 9 * pow9(cnt0)) by (nonlinear_arith)
+                    requires
+                        0 <= p0,
+                        p0 <= pow9(cnt0),
+                        0 <= digit < 10,
+                        pow9(cnt0) >= 0,
+                ;
+                assert(digit_product(num as nat) == digit_product((num0 / 10) as nat));
+                assert((product as int) * digit_product(num as nat)
+                    == (p0 as int) * ((digit as int) * digit_product((num0 / 10) as nat)))
+                    by (nonlinear_arith)
+                    requires
+                        product as int == (p0 as int) * (digit as int),
+                        digit_product(num as nat) == digit_product((num0 / 10) as nat),
+                ;
+                assert((digit as int) * digit_product((num0 / 10) as nat)
+                    == digit_product(num0 as nat));
+                assert(digit_sum(num as nat) == digit_sum((num0 / 10) as nat));
+                assert((6 - cnt0) as nat == ((6 - cnt) as nat) + 1);
+                assert(pow10((6 - cnt0) as nat) == 10 * pow10((6 - cnt) as nat));
+            }
         }
 
-        assert(digit_product_bounded(num as nat, 0nat) == 1int);
-        assert(digit_sum_bounded(num as nat, 0nat) == 0int);
-        assert(product == digit_product(n as nat));
-        assert(sum == digit_sum(n as nat));
+        proof {
+            assert(num == 0);
+            assert(digit_product(0nat) == 1);
+            assert(digit_sum(0nat) == 0);
+            pow9_le(cnt, 6nat);
+            assert(pow9(6nat) == 531441) by (compute);
+            assert(product <= 531441);
+        }
 
         (product - sum) as i32
     }
 }
 
-} 
+}
